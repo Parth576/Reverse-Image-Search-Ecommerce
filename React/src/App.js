@@ -11,7 +11,7 @@ import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up
 import CheckoutPage from './pages/checkout/checkout.component';
 
 import Header from './components/header/header.component';
-import ImageUpload from './components/image-upload/image-upload.component';
+import Upload from './components/image-upload/upload.component';
 
 // import { auth, createUserProfileDocument, addCollectionAndDocuments } from './firebase/firebase.utils';
 import { auth, createUserProfileDocument } from './firebase/firebase.utils';
@@ -66,7 +66,7 @@ class App extends React.Component {
         <Switch>
           <Route exact path='/' render={routeProps => <HomePage searchString={this.props.searchString}/>} />
           <Route path='/shop' component={ShopPage} />
-          <Route path='/upload' component={ImageUpload} />
+          <Route path='/upload' component={Upload} />
           <Route exact path='/checkout' component={CheckoutPage} />
           <Route
             exact
