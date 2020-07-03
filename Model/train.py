@@ -25,7 +25,7 @@ import os
 ap = argparse.ArgumentParser()
 ap.add_argument("-d", "--dataset", required=True,
 	help="path to input dataset (i.e., directory of images)")
-ap.add_argument("-m", "--model", required=True,
+ap.add_argument("-m", "--model", required=False,
 	help="path to output model")
 ap.add_argument("-l", "--labelbin", required=True,
 	help="path to output label binarizer")
@@ -43,8 +43,8 @@ IMAGE_DIMS = (96, 96, 3)
 # grab the image paths and randomly shuffle them
 print("[INFO] loading images...")
 imagePaths = sorted(list(paths.list_images(args["dataset"])))
-# random.seed(42)
-# random.shuffle(imagePaths)
+random.seed(42)
+random.shuffle(imagePaths)
 
 # initialize the data and labels
 data = []
@@ -63,6 +63,7 @@ for imagePath in imagePaths:
 	l = label = imagePath.split(os.path.sep)[-2].split("_")
 	labels.append(l)
 
+print(labels)
 # scale the raw pixel intensities to the range [0, 1]
 data = np.array(data, dtype="float") / 255.0
 labels = np.array(labels)
@@ -110,15 +111,15 @@ model.compile(loss="binary_crossentropy", optimizer=opt,
 
 # train the network
 print("[INFO] training network...")
-H = model.fit(
-	x=aug.flow(trainX, trainY, batch_size=BS),
+H = model.fit_generator(
+	aug.flow(trainX, trainY, batch_size=BS),
 	validation_data=(testX, testY),
 	steps_per_epoch=len(trainX) // BS,
-	epochs=EPOCHS, verbose=1)
+	epochs=10, verbose=1)
 
 # save the model to disk
 print("[INFO] serializing network...")
-model.save(args["model"])
+model.save('newmodel')
 
 # save the multi-label binarizer to disk
 print("[INFO] serializing label binarizer...")
@@ -129,11 +130,11 @@ f.close()
 # plot the training loss and accuracy
 plt.style.use("ggplot")
 plt.figure()
-N = EPOCHS
+N = 75
 plt.plot(np.arange(0, N), H.history["loss"], label="train_loss")
 plt.plot(np.arange(0, N), H.history["val_loss"], label="val_loss")
-plt.plot(np.arange(0, N), H.history["acc"], label="train_acc")
-plt.plot(np.arange(0, N), H.history["val_acc"], label="val_acc")
+plt.plot(np.arange(0, N), H.history["accuracy"], label="train_acc")
+plt.plot(np.arange(0, N), H.history["val_accuracy"], label="val_acc")
 plt.title("Training Loss and Accuracy")
 plt.xlabel("Epoch #")
 plt.ylabel("Loss/Accuracy")

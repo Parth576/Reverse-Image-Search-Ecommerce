@@ -13,7 +13,7 @@ import os
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-m", "--model", required=True,
+ap.add_argument("-m", "--model", required=False,
 	help="path to trained model model")
 ap.add_argument("-l", "--labelbin", required=True,
 	help="path to label binarizer")
@@ -34,7 +34,7 @@ image = np.expand_dims(image, axis=0)
 # load the trained convolutional neural network and the multi-label
 # binarizer
 print("[INFO] loading network...")
-model = load_model(args["model"])
+model = load_model('newmodel')
 mlb = pickle.loads(open(args["labelbin"], "rb").read())
 
 # classify the input image then find the indexes of the two class
