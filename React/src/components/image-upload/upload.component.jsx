@@ -1,10 +1,15 @@
 import React from 'react';
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import CustomButton from './../custom-button/custom-button.component';
+import Display from './../uploaded-display/uploaded-display.component';
+import './image-upload.styles.scss';
+import '../../pages/collection/collection.styles.scss';
+import {withRouter} from 'react-router-dom';
 
 class Upload extends React.Component {
 
-    state={image:null,matchedImage:null,Result:[],Confidence:[],scrapedResults:[]};
+    state={image:null,matchedImage:null,imageURL:'',Result:[],Confidence:[],scrapedResults:[]};
 
     reverseImageSearch = async () => {
         try {
@@ -13,7 +18,7 @@ class Upload extends React.Component {
             });
             const res = await response.json();
             if(res.errorMessage===undefined) {
-                this.setState({matchedImage:res.matchedImage});
+                this.setState({matchedImage:res.matchedImage,imageURL:res.path});
             }
             else {
                 alert(res.errorMessage);
@@ -45,17 +50,57 @@ class Upload extends React.Component {
     };
 
     render() {
+        console.log(this.state)
         return (
             <div style={{margin:20,padding:20,alignItems:'center',textAlign:'center'}}>
+                <h1>UPLOAD IMAGES TO FIND THEM IN OUR SITE OR OTHER SITES</h1>
                 <input type="file" id="uploader" onChange={e=>this.uploadHandler(e)}/>
                 <br/>
-                <img style={{marginTop:"10%"}} src={this.state.matchedImage} alt="Matched Image"/>
-                <div style={{width:200,height:400,textAlign:'center',alignItems:'center',marginLeft:"45%",marginTop:"10%"}}>
-                <Carousel showIndicators={false}>
-                    {this.state.scrapedResults.map(elem=>{
-                        return <div style={{width:200,height:300}}><img alt="scraped results" src={elem}/></div>
-                    })}
-                </Carousel>
+                {this.state.matchedImage ? 
+                        <div>
+                            <h2>From our site</h2>
+                            <hr />
+                        </div>
+                        :
+                        <div />   
+                }
+                <div className='collection-item'>
+                    
+                    { this.state.matchedImage ?
+                        <div
+                        className='image'
+                        style={{
+                            backgroundImage: `url(${this.state.matchedImage})`
+                        }}
+                        // onClick={() => history.push(`${match.url}/${id}`)}
+                        />
+                        :
+                        <div
+                        className='image'
+                        style={{
+                            backgroundColor: 'white'
+                        }}
+                        // onClick={() => history.push(`${match.url}/${collectionId}/${id}`)}
+                        />
+                    }
+                    {/* <div className='collection-footer'>
+                        <span className='name'>{name}</span>
+                        <span className='price'>${price}</span>
+                    </div> */}
+                    <CustomButton inverted>
+                        BUY
+                    </CustomButton>
+                </div>
+                <div className='collection-page'>
+                    <br />
+                    
+                    {this.state.scrapedResults ? <h2>From other sites</h2> : <div />}
+                    <hr />
+                    <div className='items'>
+                        {this.state.scrapedResults.map(elem=>(
+                            <Display item={elem} />
+                        ))}
+                    </div>
                 </div>
                 <br/>
                 <div>
@@ -72,4 +117,4 @@ class Upload extends React.Component {
 
 }
 
-export default Upload;
+export default withRouter(Upload);

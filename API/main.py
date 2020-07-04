@@ -57,17 +57,32 @@ def classify():
 			searchTerms.append(mlb.classes_[j])
 			print(searchTerms)
 			label = "{}: {:.2f}%".format(mlb.classes_[j], proba[j] * 100)
-		url = 'https://www.google.co.in/search?hl=en&authuser=0&tbm=shop&sxsrf=ALeKk01dLFnuhG7sPOZGKQAxW7e25dQIdA%3A1593687520675&source=hp&ei=4L39XvbaJtie9QOgmpmYBw&q={}+{}&oq={}+{}&gs_lcp=Cgtwcm9kdWN0cy1jYxADMgQIIxAnMgIIADICCAAyAggAMgIIADICCAAyAggAMgIIADICCAAyAggAUNULWJ0aYKwcaABwAHgAgAGOAogBvwySAQUwLjcuM5gBAKABAaoBD3Byb2R1Y3RzLWNjLXdpeg&sclient=products-cc&ved=0ahUKEwj2yrPUtK7qAhVYT30KHSBNBnMQ4dUDCAc&uact=5'.format(searchTerms[1],searchTerms[0],searchTerms[1],searchTerms[0])
-		response = requests.get(url)
-
-		soup = BeautifulSoup(response.text,"html.parser")
-
-		scrapingResults=soup.findAll('img')[1:]
-		newResults=[]
-		for i in scrapingResults:
-			newResults.append(i['src'])
 		
-		return json.dumps({'Result':searchTerms,'Confidence':l,'scrapingResults':newResults})
+		if searchTerms[0]=='runningshoe' or searchTerms[0]=='runningshoes':
+			searchTerms[0]='shoes'
+		
+		if searchTerms[1]=='runningshoe' or searchTerms[1]=='runningshoes':
+			searchTerms[1] = 'shoes'
+		
+		url = "https://www.shop411.com/shopping?q={}+{}&%3Bo=11376&qo=shoppingSmartAnswer".format(searchTerms[1],searchTerms[0])
+
+		response = requests.get(url)
+		data = response.text
+		soup = BeautifulSoup(data,'html.parser')
+
+		everything = []
+
+		tags=soup.find_all('div',class_="partial-search-results-item PartialSearchResults-item")
+
+		for tag in tags:
+			website = tag.find('a',class_="PartialSearchResults-item-link").get('href')
+			image = tag.find('img',class_="large-preview hidden").get('src')
+			desc = tag.find('div',class_="PartialSearchResults-item-title").text
+			price = tag.find('div',class_="PartialSearchResults-item-price").text
+			data = {'Website':website,'Image':image,'desc':desc,'price':price}
+			everything.append(data)
+		
+		return json.dumps({'Result':searchTerms,'Confidence':l,'scrapingResults':everything})
 	except Exception as e:
 		print(str(e))
 		return json.dumps({'errorMessage':str(e)})
@@ -86,13 +101,15 @@ def reverseImageSearch():
 
 		
 		answer = [c for c in str(results[0][1]).split('.')]
-		print(answer)
+		nice=answer[0].split(':')
 		imagePath=os.getcwd()+'/reversedata/'+answer[0]+'.png'
 		img=cv2.imread(imagePath)
 		ret,stream=cv2.imencode('.png',img)
 		encoded_img=base64.b64encode(stream).decode()
-		img_base64="data:image/png;base64,"+encoded_img	
-		return json.dumps({'matchedImage':img_base64})
+		img_base64="data:image/png;base64,"+encoded_img
+		path='localhost:3000/shop/{}/{}'.format(nice[0],nice[1])
+		print(path)	
+		return json.dumps({'matchedImage':img_base64,'path':path})
 	except Exception as e:
 		print(e)
 		return json.dumps({'errorMessage':str(e)})
