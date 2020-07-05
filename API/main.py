@@ -107,7 +107,7 @@ def reverseImageSearch():
 		ret,stream=cv2.imencode('.png',img)
 		encoded_img=base64.b64encode(stream).decode()
 		img_base64="data:image/png;base64,"+encoded_img
-		path='localhost:3000/shop/{}/{}'.format(nice[0],nice[1])
+		path='/shop/{}/{}'.format(nice[0],nice[1])
 		print(path)	
 		return json.dumps({'matchedImage':img_base64,'path':path})
 	except Exception as e:

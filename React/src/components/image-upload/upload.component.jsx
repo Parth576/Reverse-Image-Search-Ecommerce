@@ -11,6 +11,10 @@ class Upload extends React.Component {
 
     state={image:null,matchedImage:null,imageURL:'',Result:[],Confidence:[],scrapedResults:[]};
 
+    btnClick(Website) {
+        window.open(Website);
+    }
+
     reverseImageSearch = async () => {
         try {
             const response = await fetch('http://localhost:5000/reverseImageSearch',{
@@ -50,15 +54,14 @@ class Upload extends React.Component {
     };
 
     render() {
-        console.log(this.state)
         return (
             <div style={{margin:20,padding:20,alignItems:'center',textAlign:'center'}}>
-                <h1>UPLOAD IMAGES TO FIND THEM IN OUR SITE OR OTHER SITES</h1>
+                <h1>UPLOAD IMAGES TO FIND THEM IN OUR STORE AND OTHER STORES</h1>
                 <input type="file" id="uploader" onChange={e=>this.uploadHandler(e)}/>
                 <br/>
                 {this.state.matchedImage ? 
                         <div>
-                            <h2>From our site</h2>
+                            <h2>In our store</h2>
                             <hr />
                         </div>
                         :
@@ -72,7 +75,6 @@ class Upload extends React.Component {
                         style={{
                             backgroundImage: `url(${this.state.matchedImage})`
                         }}
-                        // onClick={() => history.push(`${match.url}/${id}`)}
                         />
                         :
                         <div
@@ -80,25 +82,20 @@ class Upload extends React.Component {
                         style={{
                             backgroundColor: 'white'
                         }}
-                        // onClick={() => history.push(`${match.url}/${collectionId}/${id}`)}
                         />
                     }
-                    {/* <div className='collection-footer'>
-                        <span className='name'>{name}</span>
-                        <span className='price'>${price}</span>
-                    </div> */}
-                    <CustomButton inverted>
+                    <CustomButton onClick={() => this.props.history.push(this.state.imageURL)} inverted>
                         BUY
                     </CustomButton>
                 </div>
                 <div className='collection-page'>
                     <br />
                     
-                    {this.state.scrapedResults ? <h2>From other sites</h2> : <div />}
+                    {this.state.scrapedResults ? <h2>Other Store Recommendations </h2> : <div />}
                     <hr />
                     <div className='items'>
                         {this.state.scrapedResults.map(elem=>(
-                            <Display item={elem} />
+                            <Display item={elem} onclick={this.btnClick}/>
                         ))}
                     </div>
                 </div>

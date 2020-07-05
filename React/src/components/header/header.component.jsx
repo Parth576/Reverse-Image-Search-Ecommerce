@@ -27,6 +27,9 @@ const Header = ({ currentUser, hidden, handleChange, dispatch }) => (
     </LogoContainer>
     <SearchBox placeholder='Search Products' handleChange={handleChange}/>
     <OptionsContainer>
+      <OptionLink to='/upload'>
+        SEARCH BY IMAGE
+      </OptionLink>
       <OptionLink to='/shop'>
         SHOP
       </OptionLink>
