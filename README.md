@@ -46,11 +46,6 @@ pip install -r requirements.txt
 python main.py
 ```
 
-## Deployment
-
-Our project is deployed at - www.rickingmorty.ml
-
-It is hosted on an AWS EC2 instance using nginx proxy server and gunicorn. It is also https enabled.
 
 
 ## Built With
