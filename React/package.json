@@ -9,7 +9,7 @@
     "cors": "^2.8.5",
     "dlib-js": "^1.0.0",
     "firebase": "^7.14.2",
-    "node-sass": "^4.14.0",
+    "node-sass": "^7.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-image-picker": "^1.1.1",
